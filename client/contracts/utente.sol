@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.27;
+pragma solidity ^0.8.26;
 
 contract utente {
     struct Utente {
@@ -32,16 +32,21 @@ contract utente {
         _;
     }
 
+    // Funzione per creare un nuovo account
     function create_account(
+        address _accountAddress, // Indirizzo della persona a cui assegnare il nickname
         string memory _name
     ) public check_exists_account check_exists_nick_name(_name) {
-        Utente memory u = Utente({id: msg.sender, nick_name: _name});
+        // Creazione dell'utente con il nickname dato
+        Utente memory u = Utente({id: _accountAddress, nick_name: _name});
 
-        accounts[msg.sender] = u;
-        nick_name_used.push(msg.sender);
-        accounts_created[msg.sender] = true;
+        // Aggiunta dell'utente al mapping e array
+        accounts[_accountAddress] = u;
+        nick_name_used.push(_accountAddress);
+        accounts_created[_accountAddress] = true;
     }
 
+    // Funzione per ottenere tutti gli utenti registrati
     function get_utente() public view returns (string[] memory) {
         string[] memory nick_names = new string[](nick_name_used.length);
         uint256 i = 0;
@@ -53,10 +58,12 @@ contract utente {
         return nick_names;
     }
 
-    function get_utente_registrato() public view returns (bool) {
-        return accounts_created[msg.sender];
+    // Funzione per verificare se un utente specifico è registrato
+    function get_utente_registrato(address _utente) public view returns (bool) {
+        return accounts_created[_utente];
     }
 
+    // Funzione per ottenere gli indirizzi degli utenti
     function get_address() public view returns (address[] memory) {
         return nick_name_used;
     }

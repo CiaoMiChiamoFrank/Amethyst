@@ -6,6 +6,7 @@ import caverna from "../assets/cavern2.webp";
 import { FaArrowUp, FaMagic, FaBolt, FaLeaf } from "react-icons/fa";
 import { DiAndroid } from "react-icons/di";
 
+//pagina principale senza login
 function Homepage() {
   const [opacity, setOpacity] = useState(0.8); // Opacità per lo sfondo
   const [cardOpacity, setCardOpacity] = useState([0.2, 0.2, 0.2]); // Opacità per le card

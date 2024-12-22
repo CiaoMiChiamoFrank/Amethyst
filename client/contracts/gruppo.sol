@@ -2,7 +2,7 @@
 pragma solidity ^0.8.27;
 
 import "./utente.sol";
-import "./PurpleCoin.sol";
+import "./Purplecoin.sol";
 
 contract gruppo {
     struct Gruppo {

@@ -33,6 +33,30 @@ function Header() {
     navigate('/')
   };
 
+
+
+  const handle_logout= () => {
+    // Rimuovi il token JWT dal localStorage
+    localStorage.removeItem("jwtToken");
+
+      fetch("http://localhost:5000/logout", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+      })
+      .then(response => response.json())
+      .then(data => {
+          console.log("Server response:", data);
+      })
+      .catch(error => {
+          console.error("Errore durante il logout dal server:", error);
+      });
+      
+    navigate("/");
+
+  };
+  
   return (
     <header
       className={`${
@@ -73,6 +97,7 @@ function Header() {
               className={`mr-2 transition-transform duration-500 ${
                 scrolled ? "scale-90" : "scale-100"
               }`}
+              
             >
               <FaUserCircle
                 className="text-purple-500 drop-shadow-sm hover:drop-shadow-lg transition-all duration-300"
@@ -99,6 +124,15 @@ function Header() {
             onClick={goToSignupPage}
           >
             Sign Up
+          </button>
+          {/* Sign Up */}
+          <button
+            className={`bg-purple-500 rounded-lg px-3 py-2 text-sm md:text-lg font-bold transition-transform duration-500 ease-in-out font-pridi ${
+              scrolled ? "hover:scale-95" : "hover:scale-105"
+            } shadow-md hover:shadow-lg`}
+            onClick={handle_logout}
+          >
+            Logout
           </button>
         </div>
       </div>
