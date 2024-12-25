@@ -7,6 +7,7 @@ import Footer from './pages/footer';
 import Login from './pages/LoginPage';
 import Signup from './pages/SignupPage';
 import Dashboard from './pages/Dashboard';
+import Gruppo from './pages/gruppoPage'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/login" element={<Login/>} />
           <Route path="/register" element={<Signup/>} />
           <Route path="/dashboard" element={<Dashboard/>} />
+          <Route path="/gruppo" element={<Gruppo/>} />
         </Routes>
       </Router>
     </AccountProvider>

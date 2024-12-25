@@ -1,4 +1,4 @@
-export const utenteABI = [
+export const gruppoABI = [
   {
     "inputs": [
       {
@@ -410,4 +410,4 @@ export const utenteABI = [
     "stateMutability": "view",
     "type": "function"
   }
-]
+];

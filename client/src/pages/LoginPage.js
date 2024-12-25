@@ -124,7 +124,7 @@ function Login() {
 
             const result = await response.json();
             if (response.ok && result.success) {
-                console.log("JWT CORRETTO");
+                console.log("JWT CORRETTO"); 
             } else {
                 console.error("Accesso negato: Token non valido.");
                 alert("Token non valido, effettuare nuovamente il login.");
@@ -156,7 +156,7 @@ function Login() {
                 
                 if(isRegistered){
                     console.log("Utente Registrato anche in Amethyst!")
-                    navigate("/");
+                    navigate("/dashboard"); //qui è dove vai se il login funziona correttamente sia su Amethyst e metamask
                 }else{
                     console.log("Utente NON registrato in Amethyst quindi vai a signup!")
                     navigate('/register');
