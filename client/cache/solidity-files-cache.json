@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Users\\carmi\\Desktop\\Progetto_Amethyst\\Amethyst\\client\\contracts\\Amethyst.sol": {
-      "lastModificationDate": 1735511605184,
-      "contentHash": "4f34e99a9c6d31bf354c7992744015c5",
+      "lastModificationDate": 1735557446398,
+      "contentHash": "f38ed8a50e3e14ea1a54f0de5a003e5e",
       "sourceName": "contracts/Amethyst.sol",
       "solcConfig": {
         "version": "0.8.28",

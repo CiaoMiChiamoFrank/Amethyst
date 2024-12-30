@@ -26,6 +26,8 @@ function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  
+  
   const goToLoginPage = () => {
     navigate('/login')
   };

@@ -7,6 +7,7 @@ import Footer from "./footer";
 import { useLocation } from "react-router-dom";
 import sfondo from "../assets/cavern_amethyst.png";
 import { AccountContext } from '../context/AccountContext';
+import { useAlert } from '../context/AlertContext';
 
 const GruppoPage = () => {
   const {account} = useContext(AccountContext);
@@ -21,6 +22,8 @@ const GruppoPage = () => {
   const [commentText, setCommentText] = useState(""); // Testo del commento
   const [nome, setNome] = useState(null);
 
+  const { showAlert } = useAlert();
+  
   useEffect(() => {
     const fetchGroupData = async () => {
       try {
@@ -72,6 +75,7 @@ const GruppoPage = () => {
         setCommentoInfo(allComments);  // Salva tutti i commenti nello stato
   
       } catch (error) {
+
         console.error("Errore nel recupero dei dati del gruppo:", error);
       }
     };
@@ -111,8 +115,11 @@ const GruppoPage = () => {
         n_post: groupData.n_post,
         descrizione: groupData.descrizione || "Nessuna descrizione disponibile"
       });
+      showAlert("Post creato con successo, complimenti", "successo");
 
     } catch (error) {
+      showAlert("Errore durante la creazione del post, riprova!", "errore");
+
       console.error("Errore durante la creazione del post:", error);
     }
   };
@@ -141,9 +148,13 @@ const GruppoPage = () => {
         n_post: groupData.n_post,
         descrizione: groupData.descrizione || "Nessuna descrizione disponibile"
       });
+      showAlert("Like aggiunto con successo!", "successo");
 
 
     } catch (error) {
+
+      showAlert("Errore durante l'inserimento del like, riprova!", "errore");
+
       console.error("Errore durante l'aggiunta del like:", error);
     }
   };
@@ -177,7 +188,13 @@ const GruppoPage = () => {
       // Resetta il campo di testo e chiude la sezione dei commenti
       setCommentText("");
       setSelectedPostId(null);
+
+      showAlert("Commento aggiunto con successo!", "successo");
+
     } catch (error) {
+
+      showAlert("Commento non inserito correttamente, riprova!", "errore");
+
       console.error("Errore durante l'aggiunta del commento:", error);
     }
   };
@@ -199,6 +216,7 @@ const GruppoPage = () => {
   
       console.log(`Post ${postId} eliminato con successo`);
 
+      showAlert("Post eliminato con successo!", "successo");
       // Recupera i dati del gruppo
       const groupData = await contract.getGruppId(groupId);
       setGroupInfo({
@@ -209,7 +227,11 @@ const GruppoPage = () => {
       });
         
 
+
     } catch (error) {
+
+      showAlert("Errore nell'eliminazione del post, riprova!", "errore");
+
       console.error("Errore durante l'eliminazione del post:", error);
     }
   };
@@ -311,8 +333,8 @@ const GruppoPage = () => {
             <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9 9 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.4 10.4 0 0 1-.524 2.318l-.003.011a11 11 0 0 1-.244.637c-.079.186.074.394.273.362a22 22 0 0 0 .693-.125m.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6-3.004 6-7 6a8 8 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a11 11 0 0 0 .398-2"/>
           </svg>
         </button>
-{/* Aggiungi il controllo per il tasto Elimina */}
-{post.author === utenteInfo && (  // Se l'autore del post è lo stesso dell'utente loggato
+    {/* Aggiungi il controllo per il tasto Elimina */}
+    {post.author === utenteInfo && (  // Se l'autore del post è lo stesso dell'utente loggato
         <button
           className="text-red-600 hover:text-red-800 font-semibold flex items-center"
           onClick={() => deletePost(post.id)} // Cliccando si elimina il post
