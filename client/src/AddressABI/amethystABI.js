@@ -1,4 +1,4 @@
-export const gruppoABI = [
+export const amethystABI = [
   {
     "inputs": [
       {
@@ -9,6 +9,19 @@ export const gruppoABI = [
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_biografia",
+        "type": "string"
+      }
+    ],
+    "name": "addBiografia",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
     "inputs": [
@@ -145,6 +158,25 @@ export const gruppoABI = [
         "internalType": "struct Amethyst.Post[]",
         "name": "",
         "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "getBiografy",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -366,7 +398,13 @@ export const gruppoABI = [
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
     "name": "get_nickname_address",
     "outputs": [
       {
@@ -409,5 +447,18 @@ export const gruppoABI = [
     ],
     "stateMutability": "view",
     "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_newNickName",
+        "type": "string"
+      }
+    ],
+    "name": "modifyNickname",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   }
-];
+]

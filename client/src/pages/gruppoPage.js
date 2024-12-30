@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { ethers, id } from "ethers";
-import { gruppoAddress } from "../AddressABI/gruppoAddress";
-import { gruppoABI } from "../AddressABI/gruppoABI";
+import { amethystAddress } from "../AddressABI/amethystAddress";
+import { amethystABI } from "../AddressABI/amethystABI";
 import Header from "./header";
 import Footer from "./footer";
 import { useLocation } from "react-router-dom";
 import sfondo from "../assets/cavern_amethyst.png";
+import { AccountContext } from '../context/AccountContext';
 
 const GruppoPage = () => {
+  const {account} = useContext(AccountContext);
   const [groupInfo, setGroupInfo] = useState({});
   const [utenteInfo, setUtenteInfo] = useState("");
   const [commentoInfo, setCommentoInfo] = useState({});
@@ -17,13 +19,14 @@ const GruppoPage = () => {
   const [posts, setPosts] = useState([]);
   const [selectedPostId, setSelectedPostId] = useState(null); // Traccia il post selezionato per il commento
   const [commentText, setCommentText] = useState(""); // Testo del commento
+  const [nome, setNome] = useState(null);
 
   useEffect(() => {
     const fetchGroupData = async () => {
       try {
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
-        const contract = new ethers.Contract(gruppoAddress, gruppoABI, signer);
+        const contract = new ethers.Contract(amethystAddress, amethystABI, signer);
   
         // Recupera i dati del gruppo
         const groupData = await contract.getGruppId(groupId);
@@ -33,9 +36,11 @@ const GruppoPage = () => {
           n_post: groupData.n_post,
           descrizione: groupData.descrizione || "Nessuna descrizione disponibile"
         });
+
+        setNome(groupData.nick_group)
   
         // Recupera l'utente
-        const utenteData = await contract.get_nickname_address();
+        const utenteData = await contract.get_nickname_address(account);
         setUtenteInfo(utenteData);
   
         // Recupera i post del gruppo
@@ -80,7 +85,7 @@ const GruppoPage = () => {
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
-      const contract = new ethers.Contract(gruppoAddress, gruppoABI, signer);
+      const contract = new ethers.Contract(amethystAddress, amethystABI, signer);
 
       const tx = await contract.createPost(groupId, "", descrizione);
       await tx.wait();
@@ -118,7 +123,7 @@ const GruppoPage = () => {
       console.log("id likeeeeeee:", postId)
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
-      const contract = new ethers.Contract(gruppoAddress, gruppoABI, signer);
+      const contract = new ethers.Contract(amethystAddress, amethystABI, signer);
 
       const tx = await contract.addLike(postId); // Passiamo l'ID del post
       await tx.wait();
@@ -147,7 +152,7 @@ const GruppoPage = () => {
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
-      const contract = new ethers.Contract(gruppoAddress, gruppoABI, signer);
+      const contract = new ethers.Contract(amethystAddress, amethystABI, signer);
   
       // Creazione del commento nel contratto
       const tx = await contract.create_commento(postId, descrizione);
@@ -181,7 +186,7 @@ const GruppoPage = () => {
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
-      const contract = new ethers.Contract(gruppoAddress, gruppoABI, signer);
+      const contract = new ethers.Contract(amethystAddress, amethystABI, signer);
       
       console.log("DELETE: ", postId);
 
@@ -213,14 +218,17 @@ const GruppoPage = () => {
     <div className="bg-gray-100 min-h-screen font-roboto">
       <Header />
       {/* Sezione Superiore con Informazioni Gruppo */}
+      
       <div
         className="relative text-white py-40 mt-20 rounded-lg shadow-md"
         style={{
+
           backgroundImage: `url(${sfondo})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-        }}
+        }} 
       >
+
         <div className="absolute inset-0 bg-black opacity-50 rounded-lg"></div>
         <div className="container mx-auto px-6 relative z-10">
           <h1 className="text-5xl font-bold mb-4 text-center">
@@ -264,7 +272,7 @@ const GruppoPage = () => {
       className="ml-4 p-3 bg-purple-500 text-white rounded-lg shadow hover:bg-purple-800"
       onClick={createPost}
     >
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-send" viewBox="0 0 16 16">
       <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>
     </svg>
     </button>

@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext} from "react";
 import Logo from "../assets/logo.png";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
+import { AccountContext } from "../context/AccountContext"; 
+import { RiDashboardHorizontalFill } from "react-icons/ri";
+import { useAlert } from '../context/AlertContext';
 
 function Header() {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate(); 
-  
-  // Handle scroll effect
+  const {isOnline, setIsOnline } = useContext(AccountContext);
+  const { showAlert } = useAlert();
+
+  // effetto scrollamento per il controllo della discesa
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -33,6 +38,16 @@ function Header() {
     navigate('/')
   };
 
+  const handleDashboard = () => {
+    navigate('/dashboard')
+  };
+
+  const handleProfile = () => {
+    navigate('/profile')
+  };
+
+
+
 
 
   const handle_logout= () => {
@@ -50,11 +65,16 @@ function Header() {
           console.log("Server response:", data);
       })
       .catch(error => {
+        showAlert("Errore durante il logout, riprova!", "errore");
+
           console.error("Errore durante il logout dal server:", error);
       });
       
-    navigate("/");
+      setIsOnline(false);
 
+      showAlert("Logout effettuato con successo, a presto!", "successo");
+
+    navigate("/");
   };
   
   return (
@@ -88,53 +108,74 @@ function Header() {
         </div>
 
         {/* Menu + Buttons */}
-        <div
-          className="flex flex-wrap items-center justify-center mt-4 md:mt-0"
-        >
-          {/* User Icon */}
-          <div className="flex items-center mr-4">
-            <button
-              className={`mr-2 transition-transform duration-500 ${
-                scrolled ? "scale-90" : "scale-100"
-              }`}
-              
-            >
-              <FaUserCircle
-                className="text-purple-500 drop-shadow-sm hover:drop-shadow-lg transition-all duration-300"
-                size={32}
-              />
-            </button>
-          </div>
+        <div className="flex flex-wrap items-center justify-center mt-4 md:mt-0">
+          {isOnline ? (
+            <>
+              {/* User Icon */}
+              <div className="flex items-center mr-4">
+                <button
+                  className={`mr-2 transition-transform duration-500 ${
+                    scrolled ? "scale-90" : "scale-100"
+                  }`}
+                >
+                  <FaUserCircle
+                    className="text-purple-500 drop-shadow-sm hover:drop-shadow-lg transition-all duration-300"
+                    size={32}
+                    onClick={handleProfile}
+                  />
+                </button>
+              </div>
 
-          {/* Login */}
-          <button
-            className={`mr-4 text-sm md:text-lg font-bold transition-colors duration-500 font-pridi ${
-              scrolled ? "text-purple-700" : "text-white"
-            } hover:drop-shadow-lg transition-all duration-300`}
-            onClick={goToLoginPage}
-          >
-            Login
-          </button>
+              {/* Dashboard Icon */}
+              <div className="flex items-center mr-4">
+                <button
+                  className={`mr-2 transition-transform duration-500 ${
+                    scrolled ? "scale-90" : "scale-100"
+                  }`}
+                >
+                  <RiDashboardHorizontalFill
+                    className="text-purple-500 drop-shadow-sm hover:drop-shadow-lg transition-all duration-300"
+                    size={32}
+                    onClick={handleDashboard}
+                  />
+                </button>
+              </div>
 
-          {/* Sign Up */}
-          <button
-            className={`bg-purple-500 rounded-lg px-3 py-2 text-sm md:text-lg font-bold transition-transform duration-500 ease-in-out font-pridi ${
-              scrolled ? "hover:scale-95" : "hover:scale-105"
-            } shadow-md hover:shadow-lg`}
-            onClick={goToSignupPage}
-          >
-            Sign Up
-          </button>
-          {/* Sign Up */}
-          <button
-            className={`bg-purple-500 rounded-lg px-3 py-2 text-sm md:text-lg font-bold transition-transform duration-500 ease-in-out font-pridi ${
-              scrolled ? "hover:scale-95" : "hover:scale-105"
-            } shadow-md hover:shadow-lg`}
-            onClick={handle_logout}
-          >
-            Logout
-          </button>
+              {/* Logout */}
+              <button
+                className={`bg-purple-500 rounded-lg px-3 py-2 text-sm md:text-lg font-bold transition-transform duration-500 ease-in-out font-pridi ${
+                  scrolled ? "hover:scale-95" : "hover:scale-105"
+                } shadow-md hover:shadow-lg`}
+                onClick={handle_logout}
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              {/* Login */}
+              <button
+                className={`mr-4 text-sm md:text-lg font-bold transition-colors duration-500 font-pridi ${
+                  scrolled ? "text-purple-700" : "text-gray-500"
+                } hover:drop-shadow-lg transition-all duration-300`}
+                onClick={goToLoginPage}
+              >
+                Login
+              </button>
+
+              {/* Sign Up */}
+              <button
+                className={`bg-purple-500 rounded-lg px-3 py-2 text-sm md:text-lg font-bold transition-transform duration-500 ease-in-out font-pridi ${
+                  scrolled ? "hover:scale-95" : "hover:scale-105"
+                } shadow-md hover:shadow-lg`}
+                onClick={goToSignupPage}
+              >
+                Sign Up
+              </button>
+            </>
+          )}
         </div>
+
       </div>
     </header>
   );

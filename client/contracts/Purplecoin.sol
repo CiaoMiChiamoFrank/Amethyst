@@ -4,9 +4,9 @@ pragma solidity ^0.8.27;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract PurpleCoin is ERC20 {
-    // inizializo la moneta e quando viene chiamato questo contratto invio i soldi al destinatario
+    // Inizializzazione del contratto senza mintare alcun saldo all'inizio
     constructor() ERC20("PurpleCoin", "PURP") {
-        _mint(msg.sender, 1000 * 10 ** decimals());
+        // Non mintiamo nulla nel costruttore
     }
 
     /**
@@ -15,7 +15,7 @@ contract PurpleCoin is ERC20 {
      * @param amount The amount of PurpleCoins to mint.
      */
     function mint(address to, uint256 amount) public {
-        _mint(to, amount);
+        _mint(to, amount); // Mint dei token per un determinato indirizzo
     }
 
     /**
@@ -24,13 +24,6 @@ contract PurpleCoin is ERC20 {
      * @return The balance of PurpleCoins for the provided address.
      */
     function getBalance(address account) public view returns (uint256) {
-        return balanceOf(account);
-    }
-
-    // logica per dare il premio raggiunti gli n like
-    function rewardForLikes(address postOwner, uint256 likeCount) public {
-        if (likeCount == 3) {
-            mint(postOwner, 5 * 10 ** decimals()); // premio 5 purplecoin
-        }
+        return balanceOf(account); // Restituisce il saldo dell'indirizzo fornito
     }
 }

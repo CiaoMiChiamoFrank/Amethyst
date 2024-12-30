@@ -4,8 +4,9 @@ import Footer from './footer';
 import { useNavigate } from 'react-router-dom';
 import { AccountContext } from '../context/AccountContext';
 import {ethers} from 'ethers';
-import { utenteABI } from '../AddressABI/utenteABI';
-import {utenteAddress} from '../AddressABI/utenteAddress';
+import { amethystABI } from '../AddressABI/amethystABI';
+import { amethystAddress } from '../AddressABI/amethystAddress';
+import { useAlert } from '../context/AlertContext';
 
 
 //pagina di iscrizione alla piattaforma amethyst
@@ -16,13 +17,15 @@ function Signup() {
     const [nickname, setNickname] = useState('');
     const [contract, setContract] = useState(null);
 
+    const { showAlert } = useAlert();
+    
     useEffect(() => {
       console.log("Account in SignUp:", account);
       console.log("isRegistered in SignUp:", isRegistered);
 
         // Usa BrowserProvider per interagire con Metamask
         const provider = new ethers.BrowserProvider(window.ethereum); // Usa BrowserProvider per v6
-        const smart = new ethers.Contract(utenteAddress, utenteABI, provider);
+        const smart = new ethers.Contract(amethystAddress, amethystABI, provider);
 
         console.log("CONTRACT:", smart);
 
@@ -40,7 +43,7 @@ function Signup() {
         const provider = new ethers.BrowserProvider(window.ethereum); // Usa il provider di Ethereum
         const signer = await provider.getSigner(account); // Usa l'account salvato nel context
 
-        const flag_contract = new ethers.Contract(utenteAddress, utenteABI, signer);
+        const flag_contract = new ethers.Contract(amethystAddress, amethystABI, signer);
 
         const tx = await flag_contract.create_account(account, nickname);
         console.log("Transazione inviata:", tx);
@@ -52,18 +55,29 @@ function Signup() {
         console.log("E' Registrato?", flag);
         if(flag){
           console.log("Registrazione riuscita!");
+          
+          showAlert("Registrazione Riuscita, ora puoi effettuare il login!", "successo");
+
           navigate('/login');
         }else {
+          showAlert("Errore durante la registrazione, riprova!", "errore");
+
           console.log("Registrazione NON riuscita!");
         }
         
 
         
       } catch (error) {
+        showAlert("Errore durante la registrazione, riprova!", "errore");
+
         console.log("Errore nella chiamata della funzione", error);
         if (error.reason) {
+          showAlert("Errore durante la registrazione, riprova!", "errore");
+
           console.log("Messaggio errore Solidity:", error.reason); // Messaggio del require
       } else {
+        showAlert("Errore durante la registrazione, riprova!", "errore");
+
           console.log("Errore completo:", error);
       }
       }
@@ -74,7 +88,7 @@ function Signup() {
       };
 
     return ( 
-    <div className="font-pridi">
+    <div className="font-pridi bg-gradient-to-r from-purple-300 via-indigo-200 to-blue-300">
     <Header/>
       <div className="relative min-h-screen flex flex-col sm:justify-center items-center ">
         <div className="relative sm:max-w-sm w-full">

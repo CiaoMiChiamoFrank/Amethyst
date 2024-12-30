@@ -1,10 +1,10 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "C:\\Users\\franc\\Desktop\\Nuova cartella\\Amethyst\\client\\contracts\\gruppo.sol": {
-      "lastModificationDate": 1735074651627,
-      "contentHash": "f24d98545e4a97e4e131ef093aa3c016",
-      "sourceName": "contracts/gruppo.sol",
+    "C:\\Users\\carmi\\Desktop\\Progetto_Amethyst\\Amethyst\\client\\contracts\\Amethyst.sol": {
+      "lastModificationDate": 1735511605184,
+      "contentHash": "4f34e99a9c6d31bf354c7992744015c5",
+      "sourceName": "contracts/Amethyst.sol",
       "solcConfig": {
         "version": "0.8.28",
         "settings": {
@@ -30,55 +30,18 @@
         }
       },
       "imports": [
-        "./utente.sol",
         "./Purplecoin.sol"
       ],
-      "versionPragmas": [
-        "^0.8.27"
-      ],
-      "artifacts": [
-        "gruppo"
-      ]
-    },
-    "C:\\Users\\franc\\Desktop\\Nuova cartella\\Amethyst\\client\\contracts\\utente.sol": {
-      "lastModificationDate": 1734963761909,
-      "contentHash": "655ec97100a0d697f3a5810aa5790332",
-      "sourceName": "contracts/utente.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "evmVersion": "paris",
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
       "versionPragmas": [
         "^0.8.26"
       ],
       "artifacts": [
-        "utente"
+        "Amethyst"
       ]
     },
-    "C:\\Users\\franc\\Desktop\\Nuova cartella\\Amethyst\\client\\contracts\\Purplecoin.sol": {
-      "lastModificationDate": 1734787597286,
-      "contentHash": "b7eeb07b2e3d12b762750f16856d842d",
+    "C:\\Users\\carmi\\Desktop\\Progetto_Amethyst\\Amethyst\\client\\contracts\\Purplecoin.sol": {
+      "lastModificationDate": 1735510740230,
+      "contentHash": "50623b110062acb8568243ea8f19d6dc",
       "sourceName": "contracts/Purplecoin.sol",
       "solcConfig": {
         "version": "0.8.28",
@@ -114,8 +77,8 @@
         "PurpleCoin"
       ]
     },
-    "C:\\Users\\franc\\Desktop\\Nuova cartella\\Amethyst\\client\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol": {
-      "lastModificationDate": 1734963853688,
+    "C:\\Users\\carmi\\Desktop\\Progetto_Amethyst\\Amethyst\\client\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol": {
+      "lastModificationDate": 1734810824659,
       "contentHash": "38910c3dfa5e3778fac8888b1d714084",
       "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
@@ -155,44 +118,8 @@
         "ERC20"
       ]
     },
-    "C:\\Users\\franc\\Desktop\\Nuova cartella\\Amethyst\\client\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol": {
-      "lastModificationDate": 1734963853650,
-      "contentHash": "67bfbc07588eb8683b3fd8f6f909563e",
-      "sourceName": "@openzeppelin/contracts/utils/Context.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "evmVersion": "paris",
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "Context"
-      ]
-    },
-    "C:\\Users\\franc\\Desktop\\Nuova cartella\\Amethyst\\client\\node_modules\\@openzeppelin\\contracts\\interfaces\\draft-IERC6093.sol": {
-      "lastModificationDate": 1734963853662,
+    "C:\\Users\\carmi\\Desktop\\Progetto_Amethyst\\Amethyst\\client\\node_modules\\@openzeppelin\\contracts\\interfaces\\draft-IERC6093.sol": {
+      "lastModificationDate": 1734810824583,
       "contentHash": "267d92fe4de67b1bdb3302c08f387dbf",
       "sourceName": "@openzeppelin/contracts/interfaces/draft-IERC6093.sol",
       "solcConfig": {
@@ -229,8 +156,44 @@
         "IERC721Errors"
       ]
     },
-    "C:\\Users\\franc\\Desktop\\Nuova cartella\\Amethyst\\client\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol": {
-      "lastModificationDate": 1734963853774,
+    "C:\\Users\\carmi\\Desktop\\Progetto_Amethyst\\Amethyst\\client\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol": {
+      "lastModificationDate": 1734810824569,
+      "contentHash": "67bfbc07588eb8683b3fd8f6f909563e",
+      "sourceName": "@openzeppelin/contracts/utils/Context.sol",
+      "solcConfig": {
+        "version": "0.8.28",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Context"
+      ]
+    },
+    "C:\\Users\\carmi\\Desktop\\Progetto_Amethyst\\Amethyst\\client\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol": {
+      "lastModificationDate": 1734810824875,
       "contentHash": "8f19f64d2adadf448840908bbaf431c8",
       "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
@@ -265,8 +228,8 @@
         "IERC20"
       ]
     },
-    "C:\\Users\\franc\\Desktop\\Nuova cartella\\Amethyst\\client\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Metadata.sol": {
-      "lastModificationDate": 1734963853775,
+    "C:\\Users\\carmi\\Desktop\\Progetto_Amethyst\\Amethyst\\client\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Metadata.sol": {
+      "lastModificationDate": 1734810824878,
       "contentHash": "794db3115001aa372c79326fcfd44b1f",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
       "solcConfig": {
@@ -301,80 +264,6 @@
       ],
       "artifacts": [
         "IERC20Metadata"
-      ]
-    },
-    "C:\\Users\\franc\\Desktop\\Nuova cartella\\Amethyst\\client\\contracts\\Lock.sol": {
-      "lastModificationDate": 1734735667659,
-      "contentHash": "7eee587c347fe6b1de50c96688cb9477",
-      "sourceName": "contracts/Lock.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "evmVersion": "paris",
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.28"
-      ],
-      "artifacts": [
-        "Lock"
-      ]
-    },
-    "C:\\Users\\franc\\Desktop\\Nuova cartella\\Amethyst\\client\\contracts\\Amethyst.sol": {
-      "lastModificationDate": 1735154670183,
-      "contentHash": "2f7b729f59d522ef7891dad82ac11500",
-      "sourceName": "contracts/Amethyst.sol",
-      "solcConfig": {
-        "version": "0.8.28",
-        "settings": {
-          "evmVersion": "paris",
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./Purplecoin.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.26"
-      ],
-      "artifacts": [
-        "Amethyst"
       ]
     }
   }

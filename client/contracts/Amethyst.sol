@@ -1,13 +1,13 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.26;
 import "./Purplecoin.sol";
 
 contract Amethyst {
-    
     //--------------------------------------UTENTE-----------------------------------------------------
     struct Utente {
         address id;
         string nick_name;
+        string biografia;
     }
 
     mapping(address => Utente) private accounts;
@@ -15,8 +15,7 @@ contract Amethyst {
     address[] private nick_name_used;
     PurpleCoin private purpleCoin;
 
-
-    constructor( address _purpleCoinAddress) {
+    constructor(address _purpleCoinAddress) {
         purpleCoin = PurpleCoin(_purpleCoinAddress);
 
         // Creazione dei 10 gruppi preimpostati
@@ -64,9 +63,13 @@ contract Amethyst {
         string memory _name
     ) public check_exists_account check_exists_nick_name(_name) {
         // Creazione dell'utente con il nickname dato
-        Utente memory u = Utente({id: _accountAddress, nick_name: _name});
 
-        // Aggiunta dell'utente al mapping e array
+        Utente memory u = Utente({
+            id: _accountAddress,
+            nick_name: _name,
+            biografia: ""
+        });
+
         accounts[_accountAddress] = u;
         nick_name_used.push(_accountAddress);
         accounts_created[_accountAddress] = true;
@@ -94,15 +97,38 @@ contract Amethyst {
         return nick_name_used;
     }
 
-    function get_nickname_address () public view returns (string memory){
-        string memory _nick_name = accounts[msg.sender].nick_name;
+    function get_nickname_address(
+        address user
+    ) public view returns (string memory) {
+        string memory _nick_name = accounts[user].nick_name;
         return _nick_name;
+    }
+
+    // Funzione per modificare il nickname dell'utente
+    function modifyNickname(
+        string memory _newNickName
+    ) public check_exists_nick_name(_newNickName) {
+        require(accounts_created[msg.sender], "Account non esistente.");
+
+        accounts[msg.sender].nick_name = _newNickName;
+    }
+
+    // Funzione per aggiungere o modificare la biografia dell'utente
+    function addBiografia(string memory _biografia) public {
+        require(accounts_created[msg.sender], "Account non esistente.");
+
+        accounts[msg.sender].biografia = _biografia;
+    }
+
+    function getBiografy(address user) public view returns (string memory) {
+        require(accounts_created[user], "Account non esistente.");
+        return accounts[user].biografia;
     }
 
     //----------------------END-UTENTE------------------------------------------------------------
 
     //---------------------------------GRUPPO-----------------------------------------------------
-     struct Gruppo {
+    struct Gruppo {
         uint256 id_gruppo;
         string nick_group;
         string descrizione;
@@ -159,7 +185,10 @@ contract Amethyst {
     }
 
     modifier check_like(uint256 _id_post) {
-        require(!userLikes[msg.sender][_id_post], "Hai gia' messo like a questo post.");
+        require(
+            !userLikes[msg.sender][_id_post],
+            "Hai gia' messo like a questo post."
+        );
         _; // Continua con la funzione se il controllo passa
     }
 
@@ -173,11 +202,17 @@ contract Amethyst {
 
     // Modifier che verifica se il mittente è l'autore del post
     modifier only_post_author(uint256 _id_post) {
-        require(posts[_id_post]._sender == msg.sender, "Solo l autore del post puo eliminarlo");
-            _;
+        require(
+            posts[_id_post]._sender == msg.sender,
+            "Solo l autore del post puo eliminarlo"
+        );
+        _;
     }
 
-    function createGruppo( string memory nick, string memory _descrizione) private {
+    function createGruppo(
+        string memory nick,
+        string memory _descrizione
+    ) private {
         Gruppo memory g = Gruppo({
             id_gruppo: count_id_gruppo,
             nick_group: nick,
@@ -190,19 +225,28 @@ contract Amethyst {
         count_id_gruppo++;
     }
 
-    function createPost( uint256 _id_gruppo, string memory _titolo, string memory _descrizione) public only_account_registred only_group_exist(_id_gruppo) check_length_titolo(_titolo) {
+    function createPost(
+        uint256 _id_gruppo,
+        string memory _titolo,
+        string memory _descrizione
+    )
+        public
+        only_account_registred
+        only_group_exist(_id_gruppo)
+        check_length_titolo(_titolo)
+    {
         Post memory post = Post({
             id_gruppo_post: _id_gruppo,
             id_post: count_id_post,
             titolo: _titolo,
             descrizione: _descrizione,
             n_like: 0,
-            account: get_nickname_address(),
+            account: get_nickname_address(msg.sender),
             rewarded: false,
             _sender: msg.sender
         });
 
-        gruppi[_id_gruppo].n_post ++;
+        gruppi[_id_gruppo].n_post++;
         posts[count_id_post] = post;
         count_id_post++;
     }
@@ -218,11 +262,11 @@ contract Amethyst {
     //RESTITUZIONI TUTTI NOMI DEI GRUPPI
     function getGruppi() public view returns (Gruppo[] memory) {
         Gruppo[] memory allGruppi = new Gruppo[](count_id_gruppo);
-        
+
         for (uint256 i = 0; i < count_id_gruppo; i++) {
             allGruppi[i] = gruppi[i];
         }
-        
+
         return allGruppi;
     }
 
@@ -233,7 +277,9 @@ contract Amethyst {
 
     ///////////////////////
     //Restituzione dei post di uno specifico gruppo
-    function getPost(uint256 _id_gruppo) public view only_group_exist(_id_gruppo) returns (Post[] memory) {
+    function getPost(
+        uint256 _id_gruppo
+    ) public view only_group_exist(_id_gruppo) returns (Post[] memory) {
         // Conta quanti post appartengono al gruppo specificato così facendo possiamo creare un array di quella dimensione
         uint256 count = 0;
         for (uint256 i = 0; i < count_id_post; i++) {
@@ -258,14 +304,29 @@ contract Amethyst {
     }
 
     //Restituzione like di uno specifico gruppo
-    function getLike(uint256 _id_gruppo) public view only_account_registred only_group_exist(_id_gruppo) returns (uint256) {
+    function getLike(
+        uint256 _id_gruppo
+    )
+        public
+        view
+        only_account_registred
+        only_group_exist(_id_gruppo)
+        returns (uint256)
+    {
         return gruppi[_id_gruppo].n_like;
     }
 
     //Aggiunta like
-    function addLike(uint256 _id_post) public only_account_registred check_like(_id_post) check_id_post(_id_post) {
+    function addLike(
+        uint256 _id_post
+    )
+        public
+        only_account_registred
+        check_like(_id_post)
+        check_id_post(_id_post)
+    {
         posts[_id_post].n_like++;
-        
+
         //quando aggiungiamo un like aggiorniamo anche i like dei gruppi
         uint256 _id_gruppo = posts[_id_post].id_gruppo_post;
         gruppi[_id_gruppo].n_like++;
@@ -275,20 +336,20 @@ contract Amethyst {
 
         // check if per controllare che una volta raggiunti gli n like, il propr. del post riceve il premio di k coin, una sola volta
         if (posts[_id_post].n_like == 3 && !posts[_id_post].rewarded) {
-            purpleCoin.mint(
-                posts[_id_post]._sender,
-                5 * 10 ** purpleCoin.decimals()
-            ); // premio k purplecoin
+            purpleCoin.mint(posts[_id_post]._sender, 5); // premio k purplecoin
             posts[_id_post].rewarded = true; // Mark as rewarded
         }
     }
 
     //creazione commento
-    function create_commento( uint256 _id_post, string memory _descrizione) public only_account_registred check_id_post(_id_post)  {
+    function create_commento(
+        uint256 _id_post,
+        string memory _descrizione
+    ) public only_account_registred check_id_post(_id_post) {
         Commento memory commento = Commento({
             id_post_commento: _id_post,
             descrizione: _descrizione,
-            account: get_nickname_address()
+            account: get_nickname_address(msg.sender)
         });
 
         commenti[count_id_commento] = commento;
@@ -296,12 +357,14 @@ contract Amethyst {
     }
 
     // Funzione che ci permette di verificare quanti commenti appartengono ad un post
-    function getCommenti(uint256 _id_post) public view check_id_post(_id_post) returns (Commento[] memory) {
+    function getCommenti(
+        uint256 _id_post
+    ) public view check_id_post(_id_post) returns (Commento[] memory) {
         // Conta quanti commenti appartengono al post specificato
         uint256 count = 0;
         for (uint256 i = 0; i < count_id_commento; i++) {
-         if (commenti[i].id_post_commento == _id_post) {
-              count++;
+            if (commenti[i].id_post_commento == _id_post) {
+                count++;
             }
         }
 
@@ -321,15 +384,15 @@ contract Amethyst {
     }
 
     // Funzione per eliminare un post
-    function deletePost(uint256 _id_post) public only_post_author(_id_post) check_id_post(_id_post) {
+    function deletePost(
+        uint256 _id_post
+    ) public only_post_author(_id_post) check_id_post(_id_post) {
         uint256 groupId = posts[_id_post].id_gruppo_post;
         uint256 n_like_post = posts[_id_post].n_like;
 
         gruppi[groupId].n_like = gruppi[groupId].n_like - n_like_post;
         gruppi[groupId].n_post--;
-        
+
         delete posts[_id_post];
     }
-    
-    
-}   
+}

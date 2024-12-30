@@ -5,22 +5,27 @@ import Footer from './footer';
 import { useNavigate } from 'react-router-dom';
 import { fetchNonce } from '../utils/fetchNonce';
 import { ethers } from 'ethers'
-import {utenteABI} from '../AddressABI/utenteABI';
-import {utenteAddress} from '../AddressABI/utenteAddress';
+import { amethystABI } from '../AddressABI/amethystABI';
+import { amethystAddress } from '../AddressABI/amethystAddress';
 import {AccountContext} from '../context/AccountContext';
+import { useAlert } from '../context/AlertContext';
 
 //login con metamask + controllo di iscrizione ad amethyst stesso
 function Login() {
     const [isMetamask, setIsMetamask] = useState(false);
     const [nonce, setNonce] = useState(null);
     const navigate = useNavigate();
-    const {setAccount, setRegistered} = useContext(AccountContext);
+    const {setAccount, setRegistered, setIsOnline} = useContext(AccountContext);
+    
+    const { showAlert } = useAlert();
 
     useEffect(() => {
         if (typeof window.ethereum !== "undefined") {
             console.log("MetaMask is available!");
             setIsMetamask(true);
         } else {
+            showAlert("Errore durante il collegamento a Metamask, riprova!", "errore");
+
             console.log("MetaMask is not available.");
         }
     }, []);
@@ -32,6 +37,8 @@ function Login() {
                 setNonce(nonce);
                 console.log("Nonce ricevuto:", nonce);
             } catch (error) {
+                showAlert("Errore durante il recupero del nonce, riprova!", "errore");
+
                 console.error("Errore durante il recupero del nonce:", error);
             }
         };
@@ -66,6 +73,8 @@ function Login() {
               });
               console.log("Firma ricevuta:", signature);
           } catch (error) {
+            showAlert("Errore durante la firma del nonce, riprova!", "errore");
+
               console.error("Errore durante la firma del nonce:", error);
               return;
           }
@@ -79,6 +88,8 @@ function Login() {
                   body: JSON.stringify({ account: userAccount, signature, nonce }),
               });
           } catch (error) {
+                showAlert("Errore durante il login, riprova!", "errore");
+
               console.error("Errore durante la chiamata al backend per la verifica:", error);
               return;
           }
@@ -88,6 +99,9 @@ function Login() {
               result = await response.json();
               console.log("Risultato della verifica:", result);
           } catch (error) {
+            
+            showAlert("Errore durante il login, riprova!", "errore");
+
               console.error("Errore nella conversione della risposta JSON:", error);
               return;
           }
@@ -98,10 +112,15 @@ function Login() {
                   console.log("JWT salvato:", result.token);
                   verifyTokenWithApi(result.token);
               } else {
+                    showAlert("JWT non presente, controlla la console!", "errore");
+
                   console.error("JWT non presente nella risposta:", result);
                   alert("Errore: token non ricevuto dal server.");
               }
           } else {
+            
+              showAlert("Errore durante il login, riprova!", "errore");
+
               alert(`Verifica fallita: ${result.error}`);
               return;
           }
@@ -109,7 +128,9 @@ function Login() {
           verifySubscription(userAccount);
 
       } catch (error) {
-          console.error("Errore durante il login:", error);
+        showAlert("Errore durante il login, riprova!", "errore");
+
+        console.error("Errore durante il login:", error);
       }
   };
   
@@ -127,11 +148,15 @@ function Login() {
                 console.log("JWT CORRETTO"); 
             } else {
                 console.error("Accesso negato: Token non valido.");
-                alert("Token non valido, effettuare nuovamente il login.");
                 localStorage.removeItem("jwtToken");
+
+                showAlert("Errore durante il login, riprova!", "errore");
+
                 navigate("/"); //anche qui vedremo dove portarla in caso di errore
             }
         } catch (error) {
+            showAlert("Errore durante il login, riprova!", "errore");
+
             console.error("Errore durante la verifica del token:", error);
             navigate("/");    //stessa cosa
         }
@@ -145,7 +170,7 @@ function Login() {
               // Usa BrowserProvider per interagire con Metamask
               const provider = new ethers.BrowserProvider(window.ethereum); // Usa BrowserProvider per v6
         
-              const contract = new ethers.Contract(utenteAddress, utenteABI, provider);
+              const contract = new ethers.Contract(amethystAddress, amethystABI, provider);
               console.log("CONTRACT:", contract);
 
               try {
@@ -156,23 +181,36 @@ function Login() {
                 
                 if(isRegistered){
                     console.log("Utente Registrato anche in Amethyst!")
+
+                    //logica per vedere se l'utente è online
+                    setIsOnline(true);
+                    
+                    showAlert("Login effettuato con successo!", "successo");
+
                     navigate("/dashboard"); //qui è dove vai se il login funziona correttamente sia su Amethyst e metamask
+                    
                 }else{
                     console.log("Utente NON registrato in Amethyst quindi vai a signup!")
+                    setIsOnline(false);
+
+                    showAlert("Per poter completare il login, esegui l'iscrizione ad Amethyst!", "warning");
+
                     navigate('/register');
                     //mi fa apparire una cosa per dirmi che devo registrarmi ANCHE ad amethyst perchè ho bisogno del nickname
                 }
 
               } catch (error) {
+                showAlert("Errore durante il login, riprova!", "errore");
+
                 console.log("ERRORE nel prelievo valore boleano: ", error);
               }
         
     };
 
     return (
-        <div className="bg-gradient-to-b from-indigo-700 to-purple-600 min-h-screen flex flex-col justify-between">
+        <div className=" min-h-screen flex flex-col justify-between">
             <Header />
-            <div className="h-[700px] flex-grow flex items-center justify-center bg-gradient-to-b from-indigo-700 via-indigo-500 to-purple-600">
+            <div className="h-[700px] flex-grow flex items-center justify-center bg-gradient-to-b from-indigo-300 via-indigo-200 to-purple-300">
                 <div className="max-w-lg w-full bg-white p-8 rounded-3xl shadow-xl transform transition-all hover:scale-105 duration-300">
                     <div className="text-center mb-6">
                         <h2 className="p-3 text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-600">
