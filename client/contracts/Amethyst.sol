@@ -7,11 +7,12 @@ Design Pattern applicati:
 - Access Restriction
 - Check-Effect-Interaction
 - Emergency Stop
-- 
+- Guard Check
 
 */
 contract Amethyst {
     //--------------------------------------UTENTE-----------------------------------------------------
+
     struct Utente {
         address id;
         string nick_name;
@@ -19,12 +20,13 @@ contract Amethyst {
     }
 
     mapping(address => Utente) private accounts;
-    mapping(address => bool) private accounts_created;
+    mapping(address => bool) private accounts_created; //per gestire se lutente è "iscritto" alla piattaforma o no
     address[] private nick_name_used;
     PurpleCoin private purpleCoin;
 
     // Emergency Stop
     bool private emergencyStop = false;
+    address private admin; //solo l'utente potrà attivare l'emergency stop
 
     modifier emergencyActive() {
         require(
@@ -34,10 +36,25 @@ contract Amethyst {
         _;
     }
 
+    //access restriction all'admin
+    modifier onlyAdmin() {
+        require(
+            msg.sender == admin,
+            "Solo l'amministratore puo' eseguire questa operazione."
+        );
+        _;
+    }
+
+    // funzione per attivare o disattivare l'emergenza consentita solo all'admin
+    function toggleEmergencyStop() public onlyAdmin {
+        emergencyStop = !emergencyStop;
+    }
+
     constructor(address _purpleCoinAddress) {
         purpleCoin = PurpleCoin(_purpleCoinAddress);
+        admin = msg.sender; //per ora chi deploya il contratto è l'admin
 
-        // Creazione dei 10 gruppi preimpostati
+        // creiamo 10 gruppi statici, per ora non c'è ancora la possibilità di crearlo dinamicamente --> coming soon
         createGruppo("Sport", "Discussioni su sport e attivita' fisica");
         createGruppo(
             "Programmazione",
@@ -76,10 +93,10 @@ contract Amethyst {
         _;
     }
 
-    // Funzione per creare un nuovo account
+    // Funzione per creare un nuovo account sulla piattaforma amethyst
     function create_account(
         address _accountAddress, // Indirizzo della persona a cui assegnare il nickname
-        string memory _name
+        string memory _name //vari controlli di Check
     )
         public
         check_exists_account
@@ -96,9 +113,11 @@ contract Amethyst {
         accounts[_accountAddress] = u;
         nick_name_used.push(_accountAddress);
         accounts_created[_accountAddress] = true;
+
+        //Nessuna Interaction con contratti esterni.
     }
 
-    // Funzione per ottenere tutti gli utenti registrati
+    // otteniamo tutti gli utenti registrati sulla piattaforma
     function get_utente() public view returns (string[] memory) {
         string[] memory nick_names = new string[](nick_name_used.length);
         uint256 i = 0;
@@ -110,16 +129,17 @@ contract Amethyst {
         return nick_names;
     }
 
-    // Funzione per verificare se un utente specifico è registrato
+    // controlliamo il booleano di un utente per vedere se è registrato o no
     function get_utente_registrato(address _utente) public view returns (bool) {
         return accounts_created[_utente];
     }
 
-    // Funzione per ottenere gli indirizzi degli utenti
+    // otteniamo gli indirizzi degli utenti registrati
     function get_address() public view returns (address[] memory) {
         return nick_name_used;
     }
 
+    //otteniamo tutti i nicknami che hanno scelto gli utenti in fase di registrazione
     function get_nickname_address(
         address user
     ) public view returns (string memory) {
@@ -127,25 +147,33 @@ contract Amethyst {
         return _nick_name;
     }
 
-    // Funzione per modificare il nickname dell'utente
+    // la possibilità di cambiare il nome dell'utente
     function modifyNickname(
         string memory _newNickName
     ) public check_exists_nick_name(_newNickName) emergencyActive {
+        // Check: controlla che l'account sia esistente
         require(accounts_created[msg.sender], "Account non esistente.");
 
-        // Effect: Modifica lo stato del nickname prima di qualsiasi interazione
+        // Effect: modifica lo stato del nickname prima di qualsiasi interazione
         accounts[msg.sender].nick_name = _newNickName;
+
+        // (Non ci sono interazioni esterne in questa funzione)
     }
 
-    // Funzione per aggiungere o modificare la biografia dell'utente
+    // posso aggiungere se non esiste o modificare la mia biografia
     function addBiografia(string memory _biografia) public emergencyActive {
+        //Check
         require(accounts_created[msg.sender], "Account non esistente.");
 
-        // Effect: Modifica la biografia dell'utente
+        // Effect
         accounts[msg.sender].biografia = _biografia;
+
+        //NO Interaction
     }
 
+    //ottengo la biografia di un utente
     function getBiografy(address user) public view returns (string memory) {
+        //Guard Check
         require(accounts_created[user], "Account non esistente.");
         return accounts[user].biografia;
     }
@@ -178,6 +206,7 @@ contract Amethyst {
         string account;
     }
 
+    //ogni gruppo parte da 0 come commenti like e post e ne tiene il conteggio per funzionalità future --> coming soon
     uint256 private count_id_gruppo = 0;
     uint256 private count_id_post = 0;
     uint256 private count_id_commento = 0;
@@ -185,7 +214,7 @@ contract Amethyst {
     mapping(uint256 => Post) private posts;
     mapping(uint256 => Commento) private commenti;
 
-    // Aggiungi un mapping per memorizzare i like per utente e post
+    // mapping utente --> like --> post
     mapping(address => mapping(uint256 => bool)) private userLikes; // mapping(address => mapping(postId => bool))
 
     // design-pattern -> Access Restriction
@@ -200,6 +229,7 @@ contract Amethyst {
         _;
     }
 
+    //controlli sulla lungezza
     modifier check_length_titolo(string memory _titolo) {
         require(
             bytes(_titolo).length <= 65,
@@ -208,6 +238,7 @@ contract Amethyst {
         _;
     }
 
+    //controlli per evitare di mettere due like
     modifier check_like(uint256 _id_post) {
         require(
             !userLikes[msg.sender][_id_post],
@@ -216,6 +247,7 @@ contract Amethyst {
         _;
     }
 
+    //controlli per vedere se il post in questione esiste
     modifier check_id_post(uint256 _id_post) {
         require(
             _id_post >= 0 && _id_post <= count_id_post,
@@ -233,6 +265,7 @@ contract Amethyst {
         _;
     }
 
+    //funzione per la creazione dei gruppi con eventuali controlli
     function createGruppo(
         string memory nick,
         string memory _descrizione
@@ -249,10 +282,11 @@ contract Amethyst {
         count_id_gruppo++;
     }
 
+    //funzione crea post per utente
     function createPost(
         uint256 _id_gruppo,
         string memory _titolo,
-        string memory _descrizione
+        string memory _descrizione //Check
     )
         public
         only_account_registred
@@ -260,7 +294,7 @@ contract Amethyst {
         check_length_titolo(_titolo)
         emergencyActive
     {
-        // Effect: Modifica lo stato prima di interagire
+        // Effect
         Post memory post = Post({
             id_gruppo_post: _id_gruppo,
             id_post: count_id_post,
@@ -275,8 +309,11 @@ contract Amethyst {
         gruppi[_id_gruppo].n_post++;
         posts[count_id_post] = post;
         count_id_post++;
+
+        //NO Interaction con contratti esterni
     }
 
+    // prelevo tutti i post di un gruppo specifico
     function getAllPosts() public view returns (Post[] memory) {
         Post[] memory allPosts = new Post[](count_id_post);
         for (uint256 i = 0; i < count_id_post; i++) {
@@ -285,7 +322,7 @@ contract Amethyst {
         return allPosts;
     }
 
-    // Funzione per ottenere tutti i gruppi
+    //preleveo i gruppi
     function getGruppi() public view returns (Gruppo[] memory) {
         Gruppo[] memory allGruppi = new Gruppo[](count_id_gruppo);
 
@@ -296,12 +333,12 @@ contract Amethyst {
         return allGruppi;
     }
 
-    // Funzione per ottenere un gruppo specifico
+    // gruppo in base all'id
     function getGruppId(uint256 _id) public view returns (Gruppo memory) {
         return gruppi[_id];
     }
 
-    // Restituzione dei post di uno specifico gruppo
+    // prelevo il post sempre in base all'id
     function getPost(
         uint256 _id_gruppo
     ) public view only_group_exist(_id_gruppo) returns (Post[] memory) {
@@ -325,7 +362,7 @@ contract Amethyst {
         return groupPosts;
     }
 
-    // Aggiungere una nuova mappatura per tracciare i livelli premiati
+    // logica di premiatura in base ai like... disegno vari livelli di premiatura designando un booleano per vedere se è già stato premiato quel livello post --> like --> si/no
     mapping(uint256 => mapping(uint256 => bool)) private rewardedLevels;
 
     // Funzione per aggiungere un like a un post
@@ -338,27 +375,35 @@ contract Amethyst {
         check_id_post(_id_post)
         emergencyActive
     {
+        // --- CHECK: Validazioni e controlli ---
+        require(posts[_id_post]._sender != address(0), "Post non esistente.");
+        require(
+            !userLikes[msg.sender][_id_post],
+            "Hai gia messo un like a questo post."
+        );
+
+        // --- EFFECT: Aggiorna lo stato ---
         posts[_id_post].n_like++;
         uint256 _id_gruppo = posts[_id_post].id_gruppo_post;
         gruppi[_id_gruppo].n_like++;
-
         userLikes[msg.sender][_id_post] = true;
 
+        // --- INTERACTION: Interazioni esterne --- (con Purple Coin)
         uint256[6] memory livelli = [uint256(3), 5, 10, 50, 100, 500];
         uint256[6] memory premi = [uint256(5), 10, 15, 20, 30, 50];
 
         for (uint256 i = 0; i < livelli.length; i++) {
             if (
-                posts[_id_post].n_like == livelli[i] &&
-                !rewardedLevels[_id_post][i]
+                posts[_id_post].n_like == livelli[i] && // controlla se è stato raggiunto un livello di reward
+                !rewardedLevels[_id_post][i] // controlla che il livello non sia già stato premiato
             ) {
-                purpleCoin.mint(posts[_id_post]._sender, premi[i]);
                 rewardedLevels[_id_post][i] = true;
+                purpleCoin.mint(posts[_id_post]._sender, premi[i]); // Interazione esterna: Minta i premi
             }
         }
     }
 
-    // Funzione per creare un commento
+    // creaimo un commento
     function create_commento(
         uint256 _id_post,
         string memory _descrizione
@@ -373,7 +418,7 @@ contract Amethyst {
         count_id_commento++;
     }
 
-    // Funzione che ci permette di verificare quanti commenti appartengono ad un post
+    // funzione che ci permette di verificare quanti commenti appartengono ad un post
     function getCommenti(
         uint256 _id_post
     ) public view check_id_post(_id_post) returns (Commento[] memory) {
@@ -397,7 +442,7 @@ contract Amethyst {
         return postCommenti;
     }
 
-    // Funzione per eliminare un post
+    // funzione per eliminare un post
     function deletePost(
         uint256 _id_post
     )
@@ -413,10 +458,5 @@ contract Amethyst {
         gruppi[groupId].n_post--;
 
         delete posts[_id_post];
-    }
-
-    // Funzione per attivare o disattivare l'emergenza
-    function toggleEmergencyStop() public {
-        emergencyStop = !emergencyStop;
     }
 }
