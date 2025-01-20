@@ -14,19 +14,17 @@ const SECRET_KEY = process.env.JWT_SECRET;
 // Verifica che la Secret Key sia configurata
 if (!SECRET_KEY) {
     console.error("Errore: JWT_SECRET non configurata nel file .env");
-    process.exit(1); // Termina l'applicazione
+    process.exit(1); 
 }
-
 
 // Array per memorizzare i nonce generati
 const released_nonce = [];
 const users = [];
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Aggiungi la route di test per verificare che il server funzioni
+// per verificare che il server funzioni
 app.get("/test", (req, res) => {
     res.send("Server is working!");
 });
@@ -38,7 +36,7 @@ app.get("/getNonce", (req, res) => {
     res.json({ nonce });
 });
 
-// Endpoint per verificare la firma
+// Endpoint per verificare che il nonce sia firmato correttament
 app.post("/verify", (req, res) => {
 
     console.log("Secret Key: ", SECRET_KEY)
@@ -101,7 +99,7 @@ function verifyToken(req, res, next) {
 
         console.log("Token decodificato:", decoded);
 
-        // Aggiunge i dati decodificati alla richiesta (es. account)
+        
         req.account = decoded.account;
 
         // Passa il controllo al prossimo middleware o route handler
@@ -117,7 +115,6 @@ app.get("/dashboard", verifyToken, (req, res) => {
     });
 });
 
-// Route per il logout (opzionale, non strettamente necessario con JWT)
 app.post("/logout", (req, res) => {
     // Non c'è molto da fare nel backend con JWT
     // JWT è senza stato, quindi il logout avviene rimuovendo il token dal client

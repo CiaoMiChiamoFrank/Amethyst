@@ -312,25 +312,6 @@ export const amethystABI = [
         "type": "uint256"
       }
     ],
-    "name": "getLike",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_id_gruppo",
-        "type": "uint256"
-      }
-    ],
     "name": "getPost",
     "outputs": [
       {
@@ -457,6 +438,13 @@ export const amethystABI = [
       }
     ],
     "name": "modifyNickname",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "toggleEmergencyStop",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

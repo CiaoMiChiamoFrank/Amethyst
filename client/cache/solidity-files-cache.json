@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Users\\carmi\\Desktop\\Progetto_Amethyst\\Amethyst\\client\\contracts\\Amethyst.sol": {
-      "lastModificationDate": 1735557446398,
-      "contentHash": "f38ed8a50e3e14ea1a54f0de5a003e5e",
+      "lastModificationDate": 1737047284024,
+      "contentHash": "e663b88fb0adc28f4391787b6283d07a",
       "sourceName": "contracts/Amethyst.sol",
       "solcConfig": {
         "version": "0.8.28",
@@ -40,8 +40,8 @@
       ]
     },
     "C:\\Users\\carmi\\Desktop\\Progetto_Amethyst\\Amethyst\\client\\contracts\\Purplecoin.sol": {
-      "lastModificationDate": 1735510740230,
-      "contentHash": "50623b110062acb8568243ea8f19d6dc",
+      "lastModificationDate": 1737131983286,
+      "contentHash": "d15c189c5d732143f7078e8a21c7f384",
       "sourceName": "contracts/Purplecoin.sol",
       "solcConfig": {
         "version": "0.8.28",

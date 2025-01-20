@@ -57,14 +57,14 @@ function Login() {
 
     const handleLogin = async () => {
       try {
-          // 1. Richiesta dell'account tramite MetaMask
+          // Richiesta dell'account tramite MetaMask
           const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
           const userAccount = accounts[0];
           console.log("Account selezionato:", userAccount);
 
           setAccount(userAccount);
           
-          // 4. Firma del nonce
+          // Firma del nonce
           let signature;
           try {
               signature = await window.ethereum.request({
@@ -79,7 +79,7 @@ function Login() {
               return;
           }
   
-          // 5. Verifica la firma con il backend
+          // verifica che firma noncw e acocutn siano validi
           let response;
           try {
               response = await fetch("http://localhost:5000/verify", {
@@ -134,6 +134,7 @@ function Login() {
       }
   };
   
+  //controlliamo il jwt sia valido
     const verifyTokenWithApi = async (token) => {
         try {
             const response = await fetch("http://localhost:5000/dashboard", {
@@ -162,6 +163,7 @@ function Login() {
         }
     };
 
+    //codice per vedere se l'utente è registrato su amethyst
     const verifySubscription = async (userAccount) => {
         console.log("ACCOUNT: ", userAccount);
 
